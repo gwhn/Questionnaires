@@ -1,0 +1,33 @@
+﻿@model Questionnaires.Web.Models.Question
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>@Html.DisplayFor(x=>x.Questionnaire.Title)</h2>
+
+<h3>@Html.DisplayFor(x=>x.Text)</h3>
+
+@if (Model.Choices.Any())
+{
+    <table>
+        @foreach (var item in Model.Choices)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(x => item.Text)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", "Choice", new {item.Id}, null) |
+                    @Html.ActionLink("Delete", "Delete", "Choice", new {item.Id}, null)
+                </td>
+            </tr>
+        }
+    </table>    
+}
+
+<p>
+    @Html.ActionLink("Create Choice", "Create", "Choice", new {questionId = Model.Id}, null) |
+    @Html.ActionLink("Edit", "Edit", new {Model.Id}) |
+    @Html.ActionLink("Back to List", "Details", "Questionnaire", new {id = Model.QuestionnaireId}, null)
+</p>

@@ -1,0 +1,36 @@
+﻿@using Questionnaires.Web.Models
+@model IEnumerable<Questionnaire>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Questionnaires</h2>
+
+@if (TempData.ContainsKey("Message"))
+{
+    <h3 class="message">@TempData["Message"]</h3>
+}
+@if (Model.Any())
+{
+    <table>
+        @foreach (Questionnaire item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.ActionLink("Answer", "Answer", new {item.Id}) |
+                    @Html.ActionLink("Edit", "Edit", new {item.Id}) |
+                    @Html.ActionLink("Details", "Details", new {item.Id}) |
+                    @Html.ActionLink("Delete", "Delete", new {item.Id})
+                </td>
+            </tr>
+        }
+    </table>
+}
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>

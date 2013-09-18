@@ -1,0 +1,40 @@
+﻿@using Questionnaires.Web.Models
+@model Questionnaire
+
+@{
+    ViewBag.Title = "Questionnaire";
+}
+
+<h2>@Html.DisplayFor(x => Model.Title)</h2>
+
+@if (Model.Questions.Any())
+{
+    using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <ol>
+            @for (var i = 0; i < Model.Questions.Count; i++)
+            {
+                if (Model.Questions[i].Choices.Any())
+                {
+                    <li>
+                        @Html.HiddenFor(x => x.Questions[i].Id)
+                        @Html.DisplayFor(x => x.Questions[i].Text)
+                        <ul>
+                            @for (var j = 0; j < Model.Questions[i].Choices.Count; j++)
+                            {
+                                <li>
+                                    @Html.RadioButtonFor(x => x.Questions[i].Choices[0].Id, Model.Questions[i].Choices[j].Id)
+                                    @Html.DisplayFor(x => x.Questions[i].Choices[j].Text)
+                                </li>
+                            }         
+                        </ul>
+                    </li>
+                }
+            }
+        </ol>
+        <p>
+            <input type="submit" value="Submit" />
+        </p>
+    }
+}
