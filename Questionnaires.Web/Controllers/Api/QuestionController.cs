@@ -26,13 +26,26 @@ namespace Questionnaires.Web.Controllers.Api
         // GET api/Question/5
         public Question GetQuestion(int id)
         {
-            Question question = db.Questions.Find(id);
+            Question question = db.Questions
+                .Include("Choices")
+                .SingleOrDefault(x => x.Id == id);
             if (question == null)
             {
                 throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.NotFound));
             }
 
-            return question;
+            return new Question
+                {
+                    Id = question.Id,
+                    Text = question.Text,
+                    QuestionnaireId = question.QuestionnaireId,
+                    Choices = question.Choices.Select(x => new Choice
+                        {
+                            Id = x.Id,
+                            Text = x.Text,
+                            QuestionId = x.QuestionId
+                        }).ToList()
+                };
         }
 
         // PUT api/Question/5

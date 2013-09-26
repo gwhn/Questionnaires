@@ -1,0 +1,943 @@
+﻿@{
+    ViewBag.Title = "Backbone Questionnaire";
+}
+
+<header>
+    <h1>Backbone Questionnaire App</h1>    
+</header>
+<section id="application">
+</section>
+
+@section scripts
+{
+    <script>
+        var Questionnaires = function() {
+            var Models = (function() {
+                var Questionnaire = Backbone.Model.extend({
+                    idAttribute: 'Id',
+                    validate: function(attrs, options) {
+
+                    }
+                });
+
+                var Question = Backbone.Model.extend({
+                    idAttribute: 'Id',
+                    validate: function(attrs, options) {
+
+                    }
+                });
+
+                var Choice = Backbone.Model.extend({
+                    idAttribute: 'Id',
+                    validate: function(attrs, options) {
+
+                    }
+                });
+
+                return {
+                    Questionnaire: Questionnaire,
+                    Question: Question,
+                    Choice: Choice
+                };
+            })();
+
+            var Collections = (function() {
+                var Questionnaires = Backbone.Collection.extend({
+                    url: '/api/Questionnaire',
+                    model: Models.Questionnaire
+                });
+
+                var Questions = Backbone.Collection.extend({
+                    url: '/api/Question',
+                    model: Models.Question
+                });
+
+                var Choices = Backbone.Collection.extend({
+                    url: '/api/Choice',
+                    model: Models.Choice
+                });
+
+                return {
+                    Questionnaires: Questionnaires,
+                    Questions: Questions,
+                    Choices: Choices
+                };
+            })();
+
+            var Templates = (function() {
+                var QuestionnaireList = _.template(
+                    '<ul class="options">' +
+                    '<li class="create">Create Questionnaire</li>' +
+                    '</ul>'
+                );
+
+                var QuestionnaireListItem = _.template(
+                    '<div class="title">{{Title}}</div>' +
+                    '<ul class="options">' +
+                    '<li class="answer">Answer</li>' +
+                    '<li class="show">Show</li>' +
+                    '<li class="edit">Edit</li>' +
+                    '<li class="destroy">Destroy</li>' +
+                    '</ul>'
+                );
+
+                var QuestionnaireShow = _.template(
+                    '<h2>{{Title}}</h2>' +
+                    '<ul class="options">' +
+                    '<li class="create">Create Question</li>' +
+                    '<li class="back">Back to Questionnaires</li>' +
+                    '</ul>'
+                );
+
+                var QuestionnaireAdd = _.template(
+                    '<input type="text" name="Title" />' +
+                    '<ul class="options">' +
+                    '<li class="create">Create</li>' +
+                    '<li class="cancel">Cancel</li>' +
+                    '</ul>'
+                );
+
+                var QuestionnaireEdit = _.template(
+                    '<input type="text" name="Title" value="{{Title}}" />' +
+                    '<ul class="options">' +
+                    '<li class="save">Save</li>' +
+                    '<li class="cancel">Cancel</li>' +
+                    '</ul>'
+                );
+
+                var QuestionnaireDestroy = _.template(
+                    '<h2>Are you sure you want to destroy {{Title}}?</h2>' +
+                    '<ul class="options">' +
+                    '<li class="confirm">Yes</li>' +
+                    '<li class="cancel">No</li>' +
+                    '</ul>'
+                );
+
+                var QuestionList = _.template(
+                    ''
+                );
+
+                var QuestionListItem = _.template(
+                    '<div class="text">{{Text}}</div>' +
+                    '<ul class="options">' +
+                    '<li class="show">Show</li>' +
+                    '<li class="edit">Edit</li>' +
+                    '<li class="destroy">Destroy</li>' +
+                    '</ul>'
+                );
+
+                var QuestionShow = _.template(
+                    '<h2>{{Text}}</h2>' +
+                    '<ul class="options">' +
+                    '<li class="create">Create Choice</li>' +
+                    '<li class="back">Back to Questionnaire</li>' +
+                    '</ul>'
+                );
+
+                var QuestionAdd = _.template(
+                    '<input type="hidden" name="QuestionnaireId" value="{{QuestionnaireId}}" />' +
+                    '<input type="text" name="Text" />' +
+                    '<ul class="options">' +
+                    '<li class="create">Create</li>' +
+                    '<li class="cancel">Cancel</li>' +
+                    '</ul>'
+                );
+
+                var QuestionEdit = _.template(
+                    '<input type="text" name="Text" value="{{Text}}" />' +
+                    '<ul class="options">' +
+                    '<li class="save">Save</li>' +
+                    '<li class="cancel">Cancel</li>' +
+                    '</ul>'
+                );
+
+                var QuestionDestroy = _.template(
+                    '<h2>Are you sure you want to destroy {{Text}}?</h2>' +
+                    '<ul class="options">' +
+                    '<li class="confirm">Yes</li>' +
+                    '<li class="cancel">No</li>' +
+                    '</ul>'
+                );
+
+                var ChoiceListItem = _.template(
+                    '<div class="text">{{Text}}</div>' +
+                    '<ul class="options">' +
+                    '<li class="edit">Edit</li>' +
+                    '<li class="destroy">Destroy</li>' +
+                    '</ul>'
+                );
+
+                var ChoiceAdd = _.template(
+                    '<input type="hidden" name="QuestionId" value="{{QuestionId}}" />' +
+                    '<input type="text" name="Text" />' +
+                    '<ul class="options">' +
+                    '<li class="create">Create</li>' +
+                    '<li class="cancel">Cancel</li>' +
+                    '</ul>'
+                );
+
+                var ChoiceEdit = _.template(
+                    '<input type="text" name="Text" value="{{Text}}" />' +
+                    '<ul class="options">' +
+                    '<li class="save">Save</li>' +
+                    '<li class="cancel">Cancel</li>' +
+                    '</ul>'
+                );
+
+                var ChoiceDestroy = _.template(
+                    '<h2>Are you sure you want to destroy {{Text}}?</h2>' +
+                    '<ul class="options">' +
+                    '<li class="confirm">Yes</li>' +
+                    '<li class="cancel">No</li>' +
+                    '</ul>'
+                );
+
+                return {
+                    QuestionnaireList: QuestionnaireList,
+                    QuestionnaireListItem: QuestionnaireListItem,
+                    QuestionnaireShow: QuestionnaireShow,
+                    QuestionnaireAdd: QuestionnaireAdd,
+                    QuestionnaireEdit: QuestionnaireEdit,
+                    QuestionnaireDestroy: QuestionnaireDestroy,
+                    QuestionList: QuestionList,
+                    QuestionListItem: QuestionListItem,
+                    QuestionShow: QuestionShow,
+                    QuestionAdd: QuestionAdd,
+                    QuestionEdit: QuestionEdit,
+                    QuestionDestroy: QuestionDestroy,
+                    ChoiceListItem: ChoiceListItem,
+                    ChoiceAdd: ChoiceAdd,
+                    ChoiceEdit: ChoiceEdit,
+                    ChoiceDestroy: ChoiceDestroy
+                };
+            })();
+
+            var Views = (function() {
+                var Application = Backbone.View.extend({
+                    el: '#application',
+                    events: {
+                        'click .create': function() {
+                            Backbone.history.navigate('questionnaire/create', true);                            
+                        }
+                    },
+                    initialize: function(options) {
+                        _.bindAll(this,
+                            'listQuestionnaires',
+                            'showQuestionnaire',
+                            'createQuestionnaire',
+                            'editQuestionnaire',
+                            'destroyQuestionnaire',
+                            'showQuestion',
+                            'createQuestion',
+                            'editQuestion',
+                            'destroyQuestion',
+                            'destroyChoice',
+                            'createChoice',
+                            'editChoice',
+                            'destroyChoice',
+                            'show'
+                        );
+                    },
+                    listQuestionnaires: function(collection) {
+                        this.$el.html(Templates.QuestionnaireList());
+                        var view = new QuestionnaireList({
+                            collection: collection
+                        });
+                        view.on('rendered', this.show);
+                        this.$el.append(view.render().el);
+                        return this;
+                    },
+                    showQuestionnaire: function(model) {
+                        var view = new QuestionnaireShow({
+                            model: model
+                        });
+                        view.on('rendered', this.show);
+                        this.$el.html(view.render().el);
+                        return this;
+                    },
+                    createQuestionnaire: function() {
+                        var view = new QuestionnaireAdd({
+                            model: new Models.Questionnaire()
+                        });
+                        view.on('rendered', this.show);
+                        this.$el.html(view.render().el);
+                        return this;
+                    },
+                    editQuestionnaire: function(model) {
+                        var view = new QuestionnaireEdit({
+                            model: model
+                        });
+                        view.on('rendered', this.show);
+                        this.$el.html(view.render().el);
+                        return this;
+                    },
+                    destroyQuestionnaire: function(model) {
+                        var view = new QuestionnaireDestroy({
+                            model: model
+                        });
+                        view.on('rendered', this.show);
+                        this.$el.html(view.render().el);
+                        return this;
+                    },
+                    showQuestion: function(model) {
+                        var view = new QuestionShow({
+                            model: model
+                        });
+                        view.on('rendered', this.show);
+                        this.$el.html(view.render().el);
+                        return this;
+                    },
+                    createQuestion: function (questionnaireId) {
+                        var view = new QuestionAdd({
+                            model: new Models.Question({
+                                QuestionnaireId: questionnaireId
+                            })
+                        });
+                        view.on('rendered', this.show);
+                        this.$el.html(view.render().el);
+                        return this;
+                    },
+                    editQuestion: function(model) {
+                        var view = new QuestionEdit({
+                            model: model
+                        });
+                        view.on('rendered', this.show);
+                        this.$el.html(view.render().el);
+                        return this;
+                    },
+                    destroyQuestion: function(model) {
+                        var view = new QuestionDestroy({
+                            model: model
+                        });
+                        view.on('rendered', this.show);
+                        this.$el.html(view.render().el);
+                        return this;
+                    },
+                    createChoice: function(questionId) {
+                        var view = new ChoiceAdd({
+                            model: new Models.Choice({
+                                QuestionId: questionId
+                            })
+                        });
+                        view.on('rendered', this.show);
+                        this.$el.html(view.render().el);
+                        return this;
+                    },
+                    editChoice: function(model) {
+                        var view = new ChoiceEdit({
+                            model: model
+                        });
+                        view.on('rendered', this.show);
+                        this.$el.html(view.render().el);
+                        return this;
+                    },
+                    destroyChoice: function(model) {
+                        var view = new ChoiceDestroy({
+                            model: model
+                        });
+                        view.on('rendered', this.show);
+                        this.$el.html(view.render().el);
+                        return this;
+                    },
+                    show: function($el) {
+                        $el.fadeIn(1000);
+                    }
+                });
+
+                var QuestionnaireList = Backbone.View.extend({
+                    tagName: 'ul',
+                    events: {
+                    },
+                    initialize: function(options) {
+                        _.bindAll(this, 'render', 'all', 'add');
+                    },
+                    render: function() {
+                        this.all();
+                        this.trigger('rendered', this.$el);
+                        return this;
+                    },
+                    all: function() {
+                        this.collection.each(this.add, this);
+                    },
+                    add: function(model) {
+                        var view = new QuestionnaireListItem({
+                            model: model
+                        });
+                        this.$el.append(view.render().el);
+                    }
+                });
+
+                var QuestionnaireListItem = Backbone.View.extend({
+                    tagName: 'li',
+                    template: Templates.QuestionnaireListItem,
+                    events: {
+                        'click .answer': 'answer',
+                        'click .show': 'show',
+                        'click .edit': 'edit',
+                        'click .destroy': 'destroy'
+                    },
+                    initialize: function(options) {
+                        _.bindAll(this, 'render', 'answer', 'show', 'edit', 'destroy');
+                    },
+                    render: function() {
+                        this.$el.html(this.template(this.model.toJSON()));
+                        return this;
+                    },
+                    answer: function() {
+                        alert('answer');
+                    },
+                    show: function() {
+                        Backbone.history.navigate('questionnaire/' + this.model.get('Id'), true);
+                    },
+                    edit: function() {
+                        Backbone.history.navigate('questionnaire/edit/' + this.model.get('Id'), true);
+                    },
+                    destroy: function() {
+                        Backbone.history.navigate('questionnaire/destroy/' + this.model.get('Id'), {
+                            trigger: true,
+                            replace: true
+                        });
+                    }
+                });
+
+                var QuestionnaireShow = Backbone.View.extend({
+                    template: Templates.QuestionnaireShow,
+                    events: {
+                        'click .create': 'create',
+                        'click .back': 'back'
+                    },
+                    initialize: function(options) {
+                        _.bindAll(this, 'render', 'create', 'back');
+                    },
+                    render: function() {
+                        var view = new QuestionList({
+                            collection: new Collections.Questions(this.model.get('Questions'))
+                        });
+                        this.$el.html(this.template(this.model.toJSON()));
+                        this.$el.append(view.render().el);
+                        this.trigger('rendered', this.$el);
+                        return this;
+                    },
+                    create: function () {
+                        Backbone.history.navigate('question/create/' + this.model.get('Id'), true);
+                    },
+                    back: function () {
+                        Backbone.history.navigate('', true);
+                    }
+                });
+
+                var QuestionnaireAdd = Backbone.View.extend({
+                    template: Templates.QuestionnaireAdd,
+                    events: {
+                        'click .create': 'create',
+                        'click .cancel': 'cancel'
+                    },
+                    initialize: function(options) {
+                        _.bindAll(this, 'render', 'create', 'cancel', 'created');
+                    },
+                    render: function() {
+                        this.$el.html(this.template());
+                        this.trigger('rendered', this.$el);
+                        return this;
+                    },
+                    create: function () {
+                        new Collections.Questionnaires([this.model]);
+                        this.model.on('sync', this.created);
+                        this.model.set('Title', $('input[name=Title]', this.el).val());
+                        this.model.save();
+                    },
+                    cancel: function() {
+                        Backbone.history.navigate('', true);
+                    },
+                    created: function(m, c, o) {
+                        Backbone.history.navigate('questionnaire/' + m.get('Id'), true);
+                    }
+                });
+
+                var QuestionnaireEdit = Backbone.View.extend({
+                    template: Templates.QuestionnaireEdit,
+                    events: {
+                        'click .save': 'save',
+                        'click .cancel': 'cancel'
+                    },
+                    initialize: function (options) {
+                        _.bindAll(this, 'render', 'save', 'cancel', 'saved');
+                    },
+                    render: function () {
+                        this.$el.html(this.template(this.model.toJSON()));
+                        this.trigger('rendered', this.$el);
+                        return this;
+                    },
+                    save: function () {
+                        this.model.on('sync', this.saved);
+                        this.model.set('Title', $('input[name=Title]', this.el).val());
+                        this.model.save();
+                    },
+                    cancel: function () {
+                        Backbone.history.navigate('questionnaire/' + this.model.get('Id'), true);
+                    },
+                    saved: function (m, c, o) {
+                        Backbone.history.navigate('questionnaire/' + m.get('Id'), true);
+                    }
+                });
+
+                var QuestionnaireDestroy = Backbone.View.extend({
+                    template: Templates.QuestionnaireDestroy,
+                    events: {
+                        'click .confirm': 'confirm',
+                        'click .cancel': 'cancel'
+                    },
+                    initialize: function(options) {
+                        _.bindAll(this, 'render', 'confirm', 'cancel');
+                        this.model.on('destroy', function(m, c, o) {
+                            Backbone.history.navigate('', true);
+                        });
+                    },
+                    render: function() {
+                        this.$el.append(this.template(this.model.toJSON()));
+                        this.trigger('rendered', this.$el);
+                        return this;
+                    },
+                    confirm: function() {
+                        this.model.destroy();
+                    },
+                    cancel: function() {
+                        Backbone.history.navigate('questionnaire/' + this.model.get('Id'), true);
+                    }
+                });
+
+                var QuestionList = Backbone.View.extend({
+                    tagName: 'ul',
+                    template: Templates.QuestionList,
+                    events: {
+
+                    },
+                    initialize: function(options) {
+                        _.bindAll(this, 'render', 'all', 'add');
+                    },
+                    render: function() {
+                        this.$el.html(this.template());
+                        this.all();
+                        this.trigger('rendered', this.$el);
+                        return this;
+                    },
+                    all: function() {
+                        this.collection.each(this.add, this);
+                    },
+                    add: function(model) {
+                        var view = new QuestionListItem({
+                            model: model
+                        });
+                        this.$el.append(view.render().el);
+                    }
+                });
+
+                var QuestionListItem = Backbone.View.extend({
+                    tagName: 'li',
+                    template: Templates.QuestionListItem,
+                    events: {
+                        'click .show': 'show',
+                        'click .edit': 'edit',
+                        'click .destroy': 'destroy'
+                    },
+                    initialize: function(options) {
+                        _.bindAll(this, 'render', 'show', 'edit', 'destroy');
+                    },
+                    render: function() {
+                        this.$el.html(this.template(this.model.toJSON()));
+                        return this;
+                    },
+                    show: function() {
+                        Backbone.history.navigate('question/' + this.model.get('Id'), true);
+                    },
+                    edit: function() {
+                        Backbone.history.navigate('question/edit/' + this.model.get('Id'), true);
+                    },
+                    destroy: function() {
+                        Backbone.history.navigate('question/destroy/' + this.model.get('Id'), {
+                            trigger: true,
+                            replace: true
+                        });
+                    }
+                });
+
+                var QuestionShow = Backbone.View.extend({
+                    template: Templates.QuestionShow,
+                    events: {
+                        'click .create': 'create',
+                        'click .back': 'back'
+                    },
+                    initialize: function(options) {
+                        _.bindAll(this, 'render', 'create', 'back');
+                    },
+                    render: function() {
+                        var view = new ChoiceList({
+                            collection: new Collections.Choices(this.model.get('Choices'))
+                        });
+                        this.$el.html(this.template(this.model.toJSON()));
+                        this.$el.append(view.render().el);
+                        this.trigger('rendered', this.$el);
+                        return this;
+                    },
+                    create: function() {
+                        Backbone.history.navigate('choice/create/' + this.model.get('Id'), true);
+                    },
+                    back: function () {
+                        Backbone.history.navigate('questionnaire/' + this.model.get('QuestionnaireId'), true);
+                    }
+                });
+
+                var QuestionAdd = Backbone.View.extend({
+                    template: Templates.QuestionAdd,
+                    events: {
+                        'click .create': 'create',
+                        'click .cancel': 'cancel'
+                    },
+                    initialize: function(options) {
+                        _.bindAll(this, 'render', 'create', 'cancel', 'created');
+                    },
+                    render: function() {
+                        this.$el.html(this.template(this.model.toJSON()));
+                        this.trigger('rendered', this.$el);
+                        return this;
+                    },
+                    create: function () {
+                        new Collections.Questions([this.model]);
+                        this.model.on('sync', this.created);
+                        this.model.set('QuestionnaireId', $('input[name=QuestionnaireId]', this.el).val());
+                        this.model.set('Text', $('input[name=Text]', this.el).val());
+                        this.model.save();
+                    },
+                    cancel: function() {
+                        Backbone.history.navigate('questionnaire/' + this.model.get('QuestionnaireId'), true);
+                    },
+                    created: function(m, c, o) {
+                        Backbone.history.navigate('question/' + m.get('Id'), true);
+                    }
+                });
+
+                var QuestionEdit = Backbone.View.extend({
+                    template: Templates.QuestionEdit,
+                    events: {
+                        'click .save': 'save',
+                        'click .cancel': 'cancel'
+                    },
+                    initialize: function (options) {
+                        _.bindAll(this, 'render', 'save', 'cancel', 'saved');
+                    },
+                    render: function () {
+                        this.$el.html(this.template(this.model.toJSON()));
+                        this.trigger('rendered', this.$el);
+                        return this;
+                    },
+                    save: function () {
+                        this.model.on('sync', this.saved);
+                        this.model.set('Text', $('input[name=Text]', this.el).val());
+                        this.model.save();
+                    },
+                    cancel: function () {
+                        Backbone.history.navigate('question/' + this.model.get('Id'), true);
+                    },
+                    saved: function (m, c, o) {
+                        Backbone.history.navigate('question/' + m.get('Id'), true);
+                    }
+                });
+
+                var QuestionDestroy = Backbone.View.extend({
+                    template: Templates.QuestionDestroy,
+                    events: {
+                        'click .confirm': 'confirm',
+                        'click .cancel': 'cancel'
+                    },
+                    initialize: function(options) {
+                        _.bindAll(this, 'render', 'confirm', 'cancel');
+                        this.model.on('destroy', function(m, c, o) {
+                            Backbone.history.navigate('questionnaire/' + m.get('QuestionnaireId'), true);
+                        });
+                    },
+                    render: function() {
+                        this.$el.append(this.template(this.model.toJSON()));
+                        this.trigger('rendered', this.$el);
+                        return this;
+                    },
+                    confirm: function() {
+                        this.model.destroy();
+                    },
+                    cancel: function() {
+                        Backbone.history.navigate('question/' + this.model.get('Id'), true);
+                    }
+                });
+
+                var ChoiceList = Backbone.View.extend({
+                    tagName: 'ul',
+                    events: {
+                                                                                                
+                    },
+                    initialize: function(options) {
+                        _.bindAll(this, 'render', 'all', 'add');
+                    },
+                    render: function() {
+                        this.all();
+                        this.trigger('rendered', this.$el);
+                        return this;
+                    },
+                    all: function() {
+                        this.collection.each(this.add, this);
+                    },
+                    add: function(model) {
+                        var view = new ChoiceListItem({
+                            model: model
+                        });
+                        this.$el.append(view.render().el);
+                    }
+                });
+
+                var ChoiceListItem = Backbone.View.extend({
+                    tagName: 'li',
+                    template: Templates.ChoiceListItem,
+                    events: {
+                        'click .edit': 'edit',
+                        'click .destroy': 'destroy'
+                    },
+                    initialize: function(options) {
+                        _.bindAll(this, 'render', 'show', 'edit', 'destroy');
+                    },
+                    render: function() {
+                        this.$el.html(this.template(this.model.toJSON()));
+                        return this;
+                    },
+                    show: function() {
+                        Backbone.history.navigate('choice/' + this.model.get('Id'), true);
+                    },
+                    edit: function() {
+                        Backbone.history.navigate('choice/edit/' + this.model.get('Id'), true);
+                    },
+                    destroy: function() {
+                        Backbone.history.navigate('choice/destroy/' + this.model.get('Id'), {
+                            trigger: true,
+                            replace: true
+                        });
+                    }
+                });
+
+                var ChoiceAdd = Backbone.View.extend({
+                    template: Templates.ChoiceAdd,
+                    events: {
+                        'click .create': 'create',
+                        'click .cancel': 'cancel'
+                    },
+                    initialize: function (options) {
+                        _.bindAll(this, 'render', 'create', 'cancel', 'created');
+                    },
+                    render: function () {
+                        this.$el.html(this.template(this.model.toJSON()));
+                        this.trigger('rendered', this.$el);
+                        return this;
+                    },
+                    create: function () {
+                        new Collections.Choices([this.model]);
+                        this.model.on('sync', this.created);
+                        this.model.set('QuestionId', $('input[name=QuestionId]', this.el).val());
+                        this.model.set('Text', $('input[name=Text]', this.el).val());
+                        this.model.save();
+                    },
+                    cancel: function () {
+                        Backbone.history.navigate('question/' + this.model.get('QuestionId'), true);
+                    },
+                    created: function (m, c, o) {
+                        Backbone.history.navigate('question/' + m.get('QuestionId'), true);
+                    }
+                });
+
+                var ChoiceEdit = Backbone.View.extend({
+                    template: Templates.ChoiceEdit,
+                    events: {
+                        'click .save': 'save',
+                        'click .cancel': 'cancel'
+                    },
+                    initialize: function (options) {
+                        _.bindAll(this, 'render', 'save', 'cancel', 'saved');
+                    },
+                    render: function () {
+                        this.$el.html(this.template(this.model.toJSON()));
+                        this.trigger('rendered', this.$el);
+                        return this;
+                    },
+                    save: function () {
+                        this.model.on('sync', this.saved);
+                        this.model.set('Text', $('input[name=Text]', this.el).val());
+                        this.model.save();
+                    },
+                    cancel: function () {
+                        Backbone.history.navigate('question/' + this.model.get('QuestionId'), true);
+                    },
+                    saved: function (m, c, o) {
+                        Backbone.history.navigate('question/' + m.get('QuestionId'), true);
+                    }
+                });
+
+                var ChoiceDestroy = Backbone.View.extend({
+                    template: Templates.ChoiceDestroy,
+                    events: {
+                        'click .confirm': 'confirm',
+                        'click .cancel': 'cancel'
+                    },
+                    initialize: function(options) {
+                        _.bindAll(this, 'render', 'confirm', 'cancel');
+                        this.model.on('destroy', function(m, c, o) {
+                            Backbone.history.navigate('question/' + m.get('QuestionId'), true);
+                        });
+                    },
+                    render: function() {
+                        this.$el.append(this.template(this.model.toJSON()));
+                        this.trigger('rendered', this.$el);
+                        return this;
+                    },
+                    confirm: function() {
+                        this.model.destroy();
+                    },
+                    cancel: function() {
+                        Backbone.history.navigate('question/' + this.model.get('QuestionId'), true);
+                    }
+                });
+
+                return {
+                    Application: Application,
+                    QuestionnaireList: QuestionnaireList,
+                    QuestionnaireListItem: QuestionnaireListItem,
+                    QuestionnaireAdd: QuestionnaireAdd,
+                    QuestionnaireEdit: QuestionnaireEdit,
+                    QuestionnaireDestroy: QuestionnaireDestroy,
+                    QuestionList: QuestionList,
+                    QuestionListItem: QuestionListItem,
+                    QuestionAdd: QuestionAdd,
+                    QuestionEdit: QuestionEdit,
+                    QuestionDestroy: QuestionDestroy,
+                    ChoiceList: ChoiceList,
+                    ChoiceListItem: ChoiceListItem,
+                    ChoiceAdd: ChoiceAdd,
+                    ChoiceEdit: ChoiceEdit,
+                    ChoiceDestroy: ChoiceDestroy
+                };
+            })();
+
+            var Router = Backbone.Router.extend({
+                routes: {
+                    'questionnaire/create': 'createQuestionnaire',
+                    'questionnaire/edit/:id': 'editQuestionnaire',
+                    'questionnaire/destroy/:id': 'destroyQuestionnaire',
+                    'questionnaire/:id': 'showQuestionnaire',
+                    'question/create/:questionnaireId': 'createQuestion',
+                    'question/edit/:id': 'editQuestion',
+                    'question/destroy/:id': 'destroyQuestion',
+                    'question/:id': 'showQuestion',
+                    'choice/create/:questionId': 'createChoice',
+                    'choice/edit/:id': 'editChoice',
+                    'choice/destroy/:id': 'destroyChoice',
+                    '*actions': 'index'
+                },
+                initialize: function(options) {
+                    _.bindAll(this,
+                        'index',
+                        'showQuestionnaire',
+                        'createQuestionnaire',
+                        'editQuestionnaire',
+                        'destroyQuestionnaire',
+                        'showQuestion',
+                        'createQuestion',
+                        'editQuestion',
+                        'destroyQuestion',
+                        'createChoice',
+                        'editChoice',
+                        'destroyChoice'
+                    );
+                    this.application = new Views.Application({
+                        el: '#application'
+                    });
+                },
+                index: function() {
+                    var questionnaires = new Collections.Questionnaires();
+                    questionnaires.on('reset', this.application.listQuestionnaires);
+                    questionnaires.fetch({ reset: true });
+                },
+                showQuestionnaire: function(id) {
+                    var questionnaire = new Models.Questionnaire({ Id: id });
+                    var questionnaires = new Collections.Questionnaires([questionnaire]);
+                    questionnaire.on('change', this.application.showQuestionnaire);
+                    questionnaire.fetch();
+                },
+                createQuestionnaire: function() {
+                    this.application.createQuestionnaire();
+                },
+                editQuestionnaire: function(id) {
+                    var questionnaire = new Models.Questionnaire({ Id: id });
+                    var questionnaires = new Collections.Questionnaires([questionnaire]);
+                    questionnaire.on('change', this.application.editQuestionnaire);
+                    questionnaire.fetch();
+                },
+                destroyQuestionnaire: function(id) {
+                    var questionnaire = new Models.Questionnaire({ Id: id });
+                    var questionnaires = new Collections.Questionnaires([questionnaire]);
+                    questionnaire.on('change', this.application.destroyQuestionnaire);
+                    questionnaire.fetch();
+                },
+                showQuestion: function(id) {
+                    var question = new Models.Question({ Id: id });
+                    var questions = new Collections.Questions([question]);
+                    question.on('change', this.application.showQuestion);
+                    question.fetch();
+                },
+                createQuestion: function(questionnaireId) {
+                    this.application.createQuestion(questionnaireId);
+                },
+                editQuestion: function(id) {
+                    var question = new Models.Question({ Id: id });
+                    var questions = new Collections.Questions([question]);
+                    question.on('change', this.application.editQuestion);
+                    question.fetch();
+                },
+                destroyQuestion: function(id) {
+                    var question = new Models.Question({ Id: id });
+                    var questions = new Collections.Questions([question]);
+                    question.on('change', this.application.destroyQuestion);
+                    question.fetch();
+                },
+                createChoice: function(questionId) {
+                    this.application.createChoice(questionId);
+                },
+                editChoice: function(id) {
+                    var choice = new Models.Choice({ Id: id });
+                    var choices = new Collections.Choices([choice]);
+                    choice.on('change', this.application.editChoice);
+                    choice.fetch();
+                },
+                destroyChoice: function(id) {
+                    var choice = new Models.Choice({ Id: id });
+                    var choices = new Collections.Choices([choice]);
+                    choice.on('change', this.application.destroyChoice);
+                    choice.fetch();
+                }
+            });
+
+            return {
+                Models: Models,
+                Collections: Collections,
+                Views: Views,
+                Templates: Templates,
+                Router: Router
+            };
+        };
+
+        $(function() {
+            _.templateSettings = {
+                interpolate: /\{\{(.+?)\}\}/g
+            };
+
+            var questionnaires = new Questionnaires();
+
+            var router = new questionnaires.Router();
+
+            Backbone.history.start();
+        });
+    </script>
+    }

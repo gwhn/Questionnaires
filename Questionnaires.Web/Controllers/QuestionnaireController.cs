@@ -20,6 +20,14 @@ namespace Questionnaires.Web.Controllers
         }
 
         //
+        // GET: /Questionnaire/Backbone
+
+        public ActionResult Backbone()
+        {
+            return View();
+        }
+
+        //
         // GET: /Questionnaire/Details/5
 
         public ActionResult Details(int id = 0)

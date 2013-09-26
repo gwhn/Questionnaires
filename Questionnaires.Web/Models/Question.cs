@@ -13,7 +13,7 @@ namespace Questionnaires.Web.Models
 
         public List<Choice> Choices { get; set; }
 
-        [Required]
+//        [Required]
         public int QuestionnaireId { get; set; }
 
         public Questionnaire Questionnaire { get; set; }

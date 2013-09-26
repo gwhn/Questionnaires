@@ -10,7 +10,7 @@ namespace Questionnaires.Web.Models
         [Required]
         public string Text { get; set; }
 
-        [Required]
+//        [Required]
         public int QuestionId { get; set; }
 
         public Question Question { get; set; }
