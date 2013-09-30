@@ -111,23 +111,27 @@
                 );
 
                 var QuestionnaireAdd = _.template(
+                    '<form>' +
                     '<label>Title<br />' +
                     '<input type="text" name="Title" />' +
                     '</label>' +
                     '<ul class="options">' +
                     '<li class="create">Create</li>' +
                     '<li class="cancel">Cancel</li>' +
-                    '</ul>'
+                    '</ul>' +
+                    '</form>'
                 );
 
                 var QuestionnaireEdit = _.template(
+                    '<form>' +
                     '<label>Title<br />' +
                     '<input type="text" name="Title" value="{{Title}}" />' +
                     '</label>' +
                     '<ul class="options">' +
                     '<li class="save">Save</li>' +
                     '<li class="cancel">Cancel</li>' +
-                    '</ul>'
+                    '</ul>' +
+                    '</form>'
                 );
 
                 var QuestionnaireDestroy = _.template(
@@ -160,6 +164,7 @@
                 );
 
                 var QuestionAdd = _.template(
+                    '<form>' +
                     '<input type="hidden" name="QuestionnaireId" value="{{QuestionnaireId}}" />' +
                     '<label>Text<br />' +
                     '<input type="text" name="Text" />' +
@@ -167,17 +172,20 @@
                     '<ul class="options">' +
                     '<li class="create">Create</li>' +
                     '<li class="cancel">Cancel</li>' +
-                    '</ul>'
+                    '</ul>' +
+                    '</form>'
                 );
 
                 var QuestionEdit = _.template(
+                    '<form>' +
                     '<label>Text<br />' +
                     '<input type="text" name="Text" value="{{Text}}" />' +
                     '</label>' +
                     '<ul class="options">' +
                     '<li class="save">Save</li>' +
                     '<li class="cancel">Cancel</li>' +
-                    '</ul>'
+                    '</ul>' +
+                    '</form>'
                 );
 
                 var QuestionDestroy = _.template(
@@ -201,6 +209,7 @@
                 );
 
                 var ChoiceAdd = _.template(
+                    '<form>' +
                     '<input type="hidden" name="QuestionId" value="{{QuestionId}}" />' +
                     '<label>Text<br />' +
                     '<input type="text" name="Text" />' +
@@ -208,17 +217,20 @@
                     '<ul class="options">' +
                     '<li class="create">Create</li>' +
                     '<li class="cancel">Cancel</li>' +
-                    '</ul>'
+                    '</ul>' +
+                    '</form>'
                 );
 
                 var ChoiceEdit = _.template(
+                    '<form>' +
                     '<label>Text<br />' +
                     '<input type="text" name="Text" value="{{Text}}" />' +
                     '</label>' +
                     '<ul class="options">' +
                     '<li class="save">Save</li>' +
                     '<li class="cancel">Cancel</li>' +
-                    '</ul>'
+                    '</ul>' +
+                    '</form>'
                 );
 
                 var ChoiceDestroy = _.template(
@@ -545,7 +557,8 @@
                     className: 'questionnaire-form',
                     events: {
                         'click .create': 'create',
-                        'click .cancel': 'cancel'
+                        'click .cancel': 'cancel',
+                        'submit form': 'create'
                     },
                     initialize: function(options) {
                         _.bindAll(this,
@@ -565,6 +578,7 @@
                         this.model.once('sync', this.created);
                         this.model.set('Title', $('input[name=Title]', this.el).val());
                         this.model.save();
+                        return false; // stop event propagating
                     },
                     cancel: function () {
                         this.trigger('navigate', '');
@@ -580,7 +594,8 @@
                     className: 'questionnaire-form',
                     events: {
                         'click .save': 'save',
-                        'click .cancel': 'cancel'
+                        'click .cancel': 'cancel',
+                        'submit form': 'save'
                     },
                     initialize: function (options) {
                         _.bindAll(this,
@@ -599,6 +614,7 @@
                         this.model.once('sync', this.saved);
                         this.model.set('Title', $('input[name=Title]', this.el).val());
                         this.model.save();
+                        return false; // stop event propagating
                     },
                     cancel: function () {
                         this.trigger('navigate', 'questionnaire/' + this.model.get('Id'));
@@ -748,7 +764,8 @@
                     className: 'question-form',
                     events: {
                         'click .create': 'create',
-                        'click .cancel': 'cancel'
+                        'click .cancel': 'cancel',
+                        'submit form': 'create'
                     },
                     initialize: function(options) {
                         _.bindAll(this,
@@ -769,6 +786,7 @@
                         this.model.set('QuestionnaireId', $('input[name=QuestionnaireId]', this.el).val());
                         this.model.set('Text', $('input[name=Text]', this.el).val());
                         this.model.save();
+                        return false; // stop event propagating
                     },
                     cancel: function () {
                         this.trigger('navigate', 'questionnaire/' + this.model.get('QuestionnaireId'));
@@ -784,7 +802,8 @@
                     className: 'question-form',
                     events: {
                         'click .save': 'save',
-                        'click .cancel': 'cancel'
+                        'click .cancel': 'cancel',
+                        'submit form': 'save'
                     },
                     initialize: function (options) {
                         _.bindAll(this,
@@ -803,6 +822,7 @@
                         this.model.once('sync', this.saved);
                         this.model.set('Text', $('input[name=Text]', this.el).val());
                         this.model.save();
+                        return false; // stop event propagating
                     },
                     cancel: function () {
                         this.trigger('navigate', 'question/' + this.model.get('Id'));
@@ -910,7 +930,8 @@
                     className: 'choice-form',
                     events: {
                         'click .create': 'create',
-                        'click .cancel': 'cancel'
+                        'click .cancel': 'cancel',
+                        'submit form': 'create'
                     },
                     initialize: function (options) {
                         _.bindAll(this,
@@ -931,6 +952,7 @@
                         this.model.set('QuestionId', $('input[name=QuestionId]', this.el).val());
                         this.model.set('Text', $('input[name=Text]', this.el).val());
                         this.model.save();
+                        return false; // stop event propagating
                     },
                     cancel: function () {
                         this.trigger('navigate', 'question/' + this.model.get('QuestionId'));
@@ -944,7 +966,8 @@
                     template: Templates.ChoiceEdit,
                     events: {
                         'click .save': 'save',
-                        'click .cancel': 'cancel'
+                        'click .cancel': 'cancel',
+                        'submit form': 'save'
                     },
                     initialize: function (options) {
                         _.bindAll(this,
@@ -963,6 +986,7 @@
                         this.model.once('sync', this.saved);
                         this.model.set('Text', $('input[name=Text]', this.el).val());
                         this.model.save();
+                        return false; // stop event propagating
                     },
                     cancel: function () {
                         this.trigger('navigate', 'question/' + this.model.get('QuestionId'));
